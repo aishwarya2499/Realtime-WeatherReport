@@ -1,0 +1,27 @@
+#Getting the weatherdata
+
+import requests
+import json
+ 
+#Getting secret value from the key vault
+weatherapikey = dbutils.secrets.get(scope="key-vault-scope", key="weather-api-key")
+location = "Bengaluru"
+ 
+base_url = "http://api.weatherapi.com/v1/"
+ 
+current_weather_url = f"{base_url}/current.json"
+ 
+params = {
+    "key": weatherapikey,
+    "q": location
+}
+ 
+response = requests.get(current_weather_url, params=params)
+ 
+#validate and process this response
+if response.status_code == 200: # the status code 200 refers to sucess
+    current_weather = response.json()
+    print("current_weather:")
+    print(json.dumps(current_weather, indent=3)) # indentation attribute
+else:
+    print(f"Error: {response.status_code}, {response.text}")
