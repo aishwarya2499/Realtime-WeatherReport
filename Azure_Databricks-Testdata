@@ -1,0 +1,30 @@
+#Sending the test data with directly using API Key
+
+from azure.eventhub import EventHubConsumerClient, EventHubProducerClient, EventData
+import json
+ 
+#Event Hub configuration
+EVENT_HUB_CONNECTION_STRING = "Endpoint=sb://weather-streaming-namespace001.servicebus.windows.net/;SharedAccessKeyName=fordatabricks;SharedAccessKey=yD39P58jvrhCaO0phjsmMEFsgI10uR2Mj+AEhPfTyRo=;EntityPath=weatherstreamingeventhub"
+EVENT_HUB_NAME = "weatherstreamingeventhub"
+ 
+#Initialise the Event Hub producer
+producer = EventHubProducerClient.from_connection_string(conn_str=EVENT_HUB_CONNECTION_STRING, eventhub_name=EVENT_HUB_NAME)
+# we have a function connection_string and parameters would be Event hub connection string and event hub name - used for authentication
+ 
+#Function to send events to Event Hub
+def send_events(event):
+    event_data_batch = producer.create_batch()
+    event_data_batch.add(EventData(json.dumps(event)))
+    producer.send_batch(event_data_batch)
+ 
+#Sample JSON event
+event = {
+    "event_id": 1111,
+    "event_name": "Test Event"
+}
+ 
+#Send the event
+send_events(event)
+ 
+#close the producer
+producer.close()
